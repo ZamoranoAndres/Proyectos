@@ -1,0 +1,236 @@
+#include <stdio.h>
+#include <math.h>
+#include "iostream"
+#include "conio.h"
+using namespace std;
+
+float detrminant(float[25][25], float);
+void cofactors(float[25][25], float);
+void trans(float[25][25], float[25][25], float);
+float inver[20][20];
+int resulta[20];
+
+void producto(int n)
+{
+	int i, j;
+	float AC[20], s;
+
+	for (i = 0; i < n; i++)
+	{
+		s = 0;
+		for (j = 0; j < n; j++)
+		{
+			s = s + inver[i][j] * resulta[j];
+		}
+		AC[i] = s;
+	}
+
+	cout << endl << endl << endl;
+	cout << "La matriz Incognita es: \n\n";
+
+	
+		for (j = 0; j < n; j++)
+		{
+			cout << "\t" <<"X"<<j+1<<" : "<< AC[j] << "\n";
+		}
+}
+
+void dibujito()
+{
+	cout << "\n\n\n\n\n\n\n\n\n\n\t\t\t\t==========="<<endl;
+	cout << "\t\t\t\t   AX=B    "<<endl;
+	cout << "\t\t\t\t==========="<<endl;
+	getch();
+	system("cls");
+}
+void dibujito2()
+{
+	cout << "\n\n\n\n\n\n\n\n\n\n\t\t\t\t===========" << endl;
+	cout << "\t\t\t\t  X=A^-1*B    " << endl;
+	cout << "\t\t\t\t===========" << endl;
+	getch();
+	system("cls");
+}
+void matrizresultad(int n)
+{
+	int i=0, j;
+	cout << "Digite su matriz resultado\n";
+		for (j = 0; j < n; j++)
+		{
+			cout <<endl<< "Digite elemento B["<<j+1<<"]["<<i+1<<"] = ";
+			cin >> resulta[j];
+		}
+}
+
+
+
+float detrminant(float a[25][25], float k)
+{
+	float s = 1, det = 0, b[25][25];
+	int i, j, m, n, c;
+	if (k == 1)
+	{
+		return (a[0][0]);
+	}
+	else
+	{
+		det = 0;
+		for (c = 0; c < k; c++)
+		{
+			m = 0;
+			n = 0;
+			for (i = 0; i < k; i++)
+			{
+				for (j = 0; j < k; j++)
+				{
+					b[i][j] = 0;
+					if (i != 0 && j != c)
+					{
+						b[m][n] = a[i][j];
+						if (n < (k - 2))
+							n++;
+						else
+						{
+							n = 0;
+							m++;
+						}
+					}
+				}
+			}
+			det = det + s * (a[0][c] * detrminant(b, k - 1));
+			s = -1 * s;
+		}
+	}
+	return (det);
+}
+
+void cofactors(float num[25][25], float f) {
+	float b[25][25], fac[25][25];
+	int p, q, m, n, i, j;
+	for (q = 0; q < f; q++) {
+		for (p = 0; p < f; p++) {
+			m = 0;
+			n = 0;
+			for (i = 0; i < f; i++) {
+				for (j = 0; j < f; j++) {
+					b[i][j] = 0;
+					if (i != q && j != p) {
+						b[m][n] = num[i][j];
+						if (n < (f - 2))
+							n++;
+						else {
+							n = 0;
+							m++;
+						}
+					}
+				}
+			}
+			fac[q][p] = pow(-1, q + p) * detrminant(b, f - 1);
+		}
+	}
+	trans(num, fac, f);
+}
+
+void trans(float num[25][25], float fac[25][25], float r)
+{
+	int i, j, k;
+	float b[25][25], inv[25][25], d, A[25][25];
+	for (i = 0; i < r; i++)
+	{
+		for (j = 0; j < r; j++)
+		{
+			b[i][j] = fac[j][i];
+		}
+	}
+
+	d = detrminant(num, r);
+	inv[i][j] = 0;
+	for (i = 0; i < r; i++)
+	{
+		for (j = 0; j < r; j++)
+		{
+			inv[i][j] = b[i][j] / d;
+		}
+	}
+
+	printf("\n La inversa de la matriz A es: \n\n");
+	for (i = 0; i < r; i++)
+	{
+		for (j = 0; j < r; j++)
+		{
+			inver[i][j] = inv[i][j];
+			printf("\t%2f", inv[i][j]);
+		}
+		printf("\n");
+	}
+
+	getch();
+
+}
+
+
+
+void hacertodo()
+{
+	float a[25][25], n, d;
+	int i, j;
+	cout << "\t\t    ====================================";
+	printf("\n\t\t\t      Cargar la Matriz A\n");
+	cout << "\t\t    ====================================\n\n\n";
+	cout << "Introduzca el tamano del matriz A: ";
+	scanf("%f", &n);
+	printf("\nIntroduzca los elementos de la matriz Incognita:\n\n");
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < n; j++)
+		{
+			cout << "A[" << i + 1 << "][" << j + 1 << "] = ";
+			scanf("%f", &a[i][j]);
+		}
+	}
+	system("cls");
+	cout << "\t\t    ====================================";
+	printf("\n\t\t\t      Cargar la Matriz B\n");
+	cout << "\t\t    ====================================\n\n\n";
+	matrizresultad(n);
+	system("cls");
+	cout << "\t\t    ====================================";
+	printf("\n\t\t\t      Resultados\n");
+	cout << "\t\t    ====================================\n\n\n";
+	d = detrminant(a, n);
+	printf("\n\n El determinante de la matriz es  =%2f\n\n", d);
+	if (d == 0)
+		printf("\n\n La matriz no tiene inversa\n");
+	else
+		cofactors(a, n);
+	producto(n);
+	getch();
+	system("cls");
+}
+
+
+void main()
+{
+	int op;
+	dibujito();
+	dibujito2();
+	do{
+		cout << "\t\t    ====================================";
+		printf("\n\t\t    Quieres Calcular La Matriz Incognita?\n");
+		cout << "\t\t    ====================================\n\n\n";
+	cout << "\n  1.-SI\n";
+	cout << "\n  0.- NO\n\n";
+	cout << "Opcion? : ";
+	cin >> op;
+	if (op == 1){
+		cout << "\n\n\t\t\t\tBUENA ELECCION!!";
+		getch();
+		system("cls");
+		hacertodo();
+	}
+	else{
+		cout << "\n\n\t\t\tBUENO, HASTA LA PROXIMA";
+		}
+	}while(op != 0);
+	getch();
+}
